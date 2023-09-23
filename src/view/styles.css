@@ -1,0 +1,31 @@
+.menuIcons {
+    -fx-fill: #FFFFFF;
+}
+
+.menuIcons:hover {
+    -fx-fill: #000000;
+}
+
+.tableIcons {
+    -fx-fill: #000000;
+}
+
+.tableIcons:hover {
+    -fx-fill: #63A58D;
+}
+
+.table-view.column-header {
+    -fx-background-color: #FFFFFF;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #63A58D;
+}
+
+.chart-bar {
+    -fx-bar-fill: #63A58D;
+}
+
+.chart-bar.chart {
+    -fx-background-color: #FFFFFF;
+}
