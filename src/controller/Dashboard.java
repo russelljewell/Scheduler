@@ -38,6 +38,8 @@ public class Dashboard implements Initializable {
     public MaterialIconView schedule;
     public MaterialIconView exit;
     public MaterialIconView analytics;
+    public MaterialIconView saveIcon;
+    public MaterialIconView resetIcon;
     @FXML
     private Circle accountCircle;
 
@@ -168,9 +170,9 @@ public class Dashboard implements Initializable {
     LocalTime open = LocalTime.of(8,00);
     LocalTime close = LocalTime.of(22,00);
     ZoneId local = ZoneId.of(TimeZone.getDefault().getID());
-    ZoneId EST = ZoneId.of("America/New_York");
-    ZonedDateTime businessOpen = ZonedDateTime.of(date, open, EST);
-    ZonedDateTime businessClose = ZonedDateTime.of(date, close, EST);
+    ZoneId CST = ZoneId.of("America/Chicago");
+    ZonedDateTime businessOpen = ZonedDateTime.of(date, open, CST);
+    ZonedDateTime businessClose = ZonedDateTime.of(date, close, CST);
     ZonedDateTime localOpen = businessOpen.withZoneSameInstant(local);
     ZonedDateTime localClose = businessClose.withZoneSameInstant(local);
     boolean upcoming = false;
@@ -211,6 +213,7 @@ public class Dashboard implements Initializable {
     public void onAddCust(MouseEvent mouseEvent) {
         clearFields();
         custFields();
+        state = 0;
         apptTable.getSelectionModel().clearSelection();
         custTable.getSelectionModel().clearSelection();
     }
@@ -264,11 +267,11 @@ public class Dashboard implements Initializable {
     @FXML
     void onReset(MouseEvent event) {
         switch (state) {
-            case 0: resetCustomer();
+            case 1: resetCustomer();
                     break;
-            case 1, 3: clearFields();
+            case 0, 2: clearFields();
                     break;
-            case 2: resetAppointment();
+            case 3: resetAppointment();
                     break;
         }
     }
@@ -365,7 +368,7 @@ public class Dashboard implements Initializable {
         customerIdText.setText("");
         appointmentIdText.setText("");
         clearFields();
-        custFields();
+        disableFields();
 
         // Initialize Appointment Table
         apptIdCol.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
@@ -419,7 +422,7 @@ public class Dashboard implements Initializable {
 
         // Populate Appointment Text Fields and Appointment Table on Customer Selection
         apptTable.getSelectionModel().selectedItemProperty().addListener((observableValue, priorSelection, newSelection) -> {
-            if (newSelection != null) {
+            if (newSelection != null && associated.isSelected()) {
                 clearFields();
                 apptFields();
                 Appointment selected = apptTable.getSelectionModel().getSelectedItem();
@@ -467,15 +470,27 @@ public class Dashboard implements Initializable {
     }
     public void custFields() {
         clearFields();
+        hoursText.setVisible(false);
+        dateField.setVisible(false);
+        startField.setVisible(false);
+        endField.setVisible(false);
+        nameField.setVisible(true);
         nameField.setPromptText("Name");
+        addressField.setVisible(true);
         addressField.setPromptText("Address");
+        postalField.setVisible(true);
         postalField.setPromptText("Postal Code");
+        phoneField.setVisible(true);
         phoneField.setPromptText("Phone Number");
         contactBox.setVisible(false);
         countryBox.setVisible(true);
         countryBox.setItems(CountryQuery.countries());
         userBox.setVisible(false);
         divisionBox.setVisible(true);
+        save.setVisible(true);
+        saveIcon.setVisible(true);
+        reset.setVisible(true);
+        resetIcon.setVisible(true);
         countryBox.getSelectionModel().selectedItemProperty().addListener((observableValue, priorSelection, newSelection) -> {
             if (newSelection != null) {
                 Country selectedCountry = countryBox.getSelectionModel().getSelectedItem();
@@ -496,6 +511,14 @@ public class Dashboard implements Initializable {
         divisionBox.setVisible(false);
         userBox.setVisible(true);
         userBox.setItems(UserQuery.users());
+        hoursText.setVisible(true);
+        dateField.setVisible(true);
+        startField.setVisible(true);
+        endField.setVisible(true);
+        save.setVisible(true);
+        saveIcon.setVisible(true);
+        reset.setVisible(true);
+        resetIcon.setVisible(true);
     }
     
     public void addCustomer() {
@@ -638,23 +661,26 @@ public class Dashboard implements Initializable {
     }
 
     public void resetCustomer() {
-        Customer selected = custTable.getSelectionModel().getSelectedItem();
-        nameField.setText(selected.getCustomerName());
-        addressField.setText(selected.getAddress());
-        postalField.setText(selected.getPostalCode());
-        phoneField.setText(selected.getPhoneNumber());
-        for (Country country : countryBox.getItems()) {
-            if (country.getCountryID() == selected.getCountryID() ) {
-                countryBox.setValue(country);
-                break;
+        if (custTable.getSelectionModel().getSelectedItem() != null) {
+            Customer selected = custTable.getSelectionModel().getSelectedItem();
+            nameField.setText(selected.getCustomerName());
+            addressField.setText(selected.getAddress());
+            postalField.setText(selected.getPostalCode());
+            phoneField.setText(selected.getPhoneNumber());
+            for (Country country : countryBox.getItems()) {
+                if (country.getCountryID() == selected.getCountryID() ) {
+                    countryBox.setValue(country);
+                    break;
+                }
+            }
+            for (Division division : divisionBox.getItems()) {
+                if (division.getDivisionID() == selected.getDivisionID()) {
+                    divisionBox.setValue(division);
+                    break;
+                }
             }
         }
-        for (Division division : divisionBox.getItems()) {
-            if (division.getDivisionID() == selected.getDivisionID()) {
-                divisionBox.setValue(division);
-                break;
-            }
-        }
+
     }
 
     public void resetAppointment() {
@@ -678,5 +704,23 @@ public class Dashboard implements Initializable {
         dateField.setText(String.valueOf(selected.getStart().atZone(TimeZone.getDefault().toZoneId()).toLocalDate()));
         startField.setText(String.valueOf(selected.getStart().atZone(TimeZone.getDefault().toZoneId()).toLocalTime()));
         endField.setText(String.valueOf(selected.getEnd().atZone(TimeZone.getDefault().toZoneId()).toLocalTime()));
+    }
+    public void disableFields(){
+        nameField.setVisible(false);
+        addressField.setVisible(false);
+        postalField.setVisible(false);
+        phoneField.setVisible(false);
+        countryBox.setVisible(false);
+        contactBox.setVisible(false);
+        divisionBox.setVisible(false);
+        userBox.setVisible(false);
+        hoursText.setVisible(false);
+        dateField.setVisible(false);
+        startField.setVisible(false);
+        endField.setVisible(false);
+        save.setVisible(false);
+        saveIcon.setVisible(false);
+        reset.setVisible(false);
+        resetIcon.setVisible(false);
     }
 }

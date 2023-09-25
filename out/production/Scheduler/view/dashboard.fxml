@@ -411,7 +411,7 @@
                                                       <Insets bottom="12.0" left="2.0" top="10.0" />
                                                    </GridPane.margin>
                                                 </Label>
-                                                <MaterialIconView glyphName="CHECK" size="18" GridPane.halignment="CENTER" />
+                                                <MaterialIconView fx:id="saveIcon" glyphName="CHECK" size="18" GridPane.halignment="CENTER" />
                                              </children>
                                              <GridPane.margin>
                                                 <Insets bottom="10.0" />
@@ -437,7 +437,7 @@
                                                       <Insets bottom="12.0" left="2.0" top="10.0" />
                                                    </GridPane.margin>
                                                 </Label>
-                                                <MaterialIconView glyphName="UNDO" size="18" GridPane.halignment="CENTER" />
+                                                <MaterialIconView fx:id="resetIcon" glyphName="UNDO" size="18" GridPane.halignment="CENTER" />
                                              </children>
                                              <GridPane.margin>
                                                 <Insets bottom="10.0" />
